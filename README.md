@@ -69,7 +69,7 @@ export OPENAI_API_KEY="your-api-key"
 python app.py
 ```
 
-Then open `http://127.0.0.1:5000` in your browser.
+Then open `http://127.0.0.1:8080` in your browser.
 
 ---
 
