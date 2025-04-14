@@ -91,9 +91,6 @@ def upload() -> str:
             error = "Error: CSV file should contain exactly one column."
             # Render the upload template with the error message.
             return render_template('upload.html', error=error)
-        
-        # Calculate the sum of the values in the single column of the CSV.
-        csv_sum = df.iloc[:, 0].sum()
 
         # Determine the path for the static folder (for saving plot images) using the Flask app's root path.
         static_folder = os.path.join(app.root_path, 'static')
@@ -255,7 +252,6 @@ def upload() -> str:
     # Render the 'display.html' template with all the extracted information and generated image URLs.
     return render_template(
         'display.html',
-        csv_sum=csv_sum,                          # Sum of CSV values.
         image_urls=image_urls,                    # List of image URLs.
         rms=features['rms'],                      # Extracted RMS value.
         kurtosis=features['kurtosis'],            # Extracted kurtosis.
