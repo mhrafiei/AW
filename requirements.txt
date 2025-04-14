@@ -1,0 +1,10 @@
+flask
+matplotlib
+nbformat
+numpy
+openai
+pandas
+pywt
+requests
+scipy
+seaborn
