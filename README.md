@@ -50,10 +50,11 @@ export OPENAI_API_KEY="your-api-key-here"
 ├── index.html         # Landing page template
 ├── templates/         # HTML templates
 ├── static/            # Static CSS/JS files
-├── report/            # Generated reports
+├── report/            # Example of generated plots (reports are generated in the app)
 ├── utilities.py       # Signal processing and frequency analysis
 ├── fetchpull.sh       # Git helper script
 ├── gitcommit.sh       # Git helper script
+├── requirements.txt   # Required libraries
 └── README.md          # This file
 ```
 
