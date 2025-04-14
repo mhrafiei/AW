@@ -6,9 +6,9 @@
 
 BearingWatch is a web-based diagnostic tool designed to detect **rolling element bearing faults** using uploaded vibration signal data. Powered by advanced signal processing techniques, the tool identifies and visualizes key defect frequencies to support predictive maintenance and reduce unplanned downtime.
 
-> 🚧 This public version of the application is built with Flask and is intended solely for educational and debugging purposes. **It is not suitable for production use**.
+> 🚧 This public version of the application is built with Flask and is intended solely for educational and debugging purposes. **It is not suitable for production use** as it does not include extensive error handling and security measures.
 
-> 🚀 Try the secure version live at: [https://bearingwatch.com/](https://bearingwatch.com/)
+> 🚀 Try the relativly secure version of the app is live at: [https://bearingwatch.com/](https://bearingwatch.com/). However, this version still requires error-handling managment. 
 
 ---
 
