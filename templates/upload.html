@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>AssetWatch Signal Analysis - Upload</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Google Font: Raleway -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Global Resets & Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Raleway", sans-serif;
+        background-color: #111;
+        color: #fff;
+        overflow-x: hidden;
+      }
+      a {
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+      a:hover {
+        color: #e74c3c;
+      }
+      /* Instructions panel styling */
+      .instructions {
+        background-color: #222;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        margin-bottom: 2rem;
+      }
+      .instructions h3 {
+        color: #57e389;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      .instructions p {
+        color: #ccc;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+      }
+      /* Card styling for form */
+      .card {
+        background-color: #222;
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+      .card-title {
+        color: #57e389;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        animation: fadeUp 1s ease forwards;
+        opacity: 0;
+      }
+      @keyframes fadeUp {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .form-label {
+        color: #fff;
+        font-weight: 500;
+      }
+      .form-check-label {
+        color: #fff;
+      }
+      .btn-primary {
+        background-color: #57e389;
+        border-color: #57e389;
+        font-weight: 600;
+      }
+      .btn-primary:hover {
+        background-color: #4ac17a;
+        border-color: #4ac17a;
+      }
+      .error-message {
+        margin-bottom: 20px;
+      }
+      /* Loading message styling */
+      #loading-message {
+        display: none;
+        margin-top: 1rem;
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #57e389;
+      }
+      /* Container spacing */
+      .form-container {
+        margin-top: 8vh;
+      }
+      /* Footer styling within left column */
+      footer {
+        margin-top: 2rem;
+        text-align: center;
+        font-size: 0.9rem;
+        color: #ccc;
+      }
+      footer p {
+        margin-bottom: 0.6rem;
+      }
+      footer p span {
+        color: #e74c3c;
+      }
+      footer a {
+        color: #1abc9c;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container form-container">
+      <div class="row">
+        <!-- Left column: Instructions and Footer -->
+        <div class="col-md-5">
+          <div class="instructions">
+            <h3>Service Instructions</h3>
+            <p>
+              This service analyzes recorded signals from rotating machinery to generate reports on potential rolling element bearing defects.
+            </p>
+            <p>
+              Advanced signal processing techniques are used to extract key features and identify characteristic defect frequencies, including:
+            </p>
+            <ul>
+              <li><strong>Ball Pass Frequency (Inner Race)</strong></li>
+              <li><strong>Ball Pass Frequency (Outer Race)</strong></li>
+              <li><strong>Fundamental Train Frequency</strong></li>
+              <li><strong>Ball Spin Frequency</strong></li>
+            </ul>
+            <p>
+              Please upload a CSV file containing signal data (with one column only) and enter the required parameters. Then click “Submit Data” to receive your analysis report.
+            </p>
+          </div>
+          <!-- Footer within left column -->
+          <footer>
+            <p>Built with <span>♥</span> for the AssetWatch Community!</p>
+            <p>© 2025 Mohammad H. Rafiei, Ph.D. All Rights Reserved.</p>
+            <a href="https://mhrafiei.github.io/" target="_blank">mhrafiei.github.io</a>
+          </footer>
+        </div>
+        <!-- Right column: Form -->
+        <div class="col-md-7">
+          <div class="card">
+            <h2 class="card-title text-center">AssetWatch Signal Analysis</h2>
+            {% if error %}
+              <div class="alert alert-danger error-message" role="alert">
+                {{ error }}
+              </div>
+            {% endif %}
+            <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+              <!-- CSV File Upload -->
+              <div class="mb-3">
+                <label for="file" class="form-label">CSV File (one column only)</label>
+                <input type="file" class="form-control" id="file" name="file" accept=".csv" required>
+              </div>
+              <h5 class="mb-3" style="color: #57e389;">Signal &amp; Filter Parameters</h5>
+              <div class="mb-3">
+                <label for="rpm" class="form-label">RPM</label>
+                <input type="number" class="form-control" id="rpm" name="rpm" value="1800" required>
+              </div>
+              <div class="mb-3">
+                <label for="sampling_frequency" class="form-label">Sampling Frequency (Hz)</label>
+                <input type="number" class="form-control" id="sampling_frequency" name="sampling_frequency" value="12000" required>
+              </div>
+              <div class="mb-3">
+                <label for="bpfi_frequency" class="form-label">BPFI Frequency (Hz)</label>
+                <input type="number" step="any" class="form-control" id="bpfi_frequency" name="bpfi_frequency" value="5.415" required>
+              </div>
+              <div class="mb-3">
+                <label for="bpfo_frequency" class="form-label">BPFO Frequency (Hz)</label>
+                <input type="number" step="any" class="form-control" id="bpfo_frequency" name="bpfo_frequency" value="3.585" required>
+              </div>
+              <div class="mb-3">
+                <label for="ftf_frequency" class="form-label">FTF Frequency (Hz)</label>
+                <input type="number" step="any" class="form-control" id="ftf_frequency" name="ftf_frequency" value="0.3983" required>
+              </div>
+              <div class="mb-3">
+                <label for="bsf_frequency" class="form-label">BSF Frequency (Hz)</label>
+                <input type="number" step="any" class="form-control" id="bsf_frequency" name="bsf_frequency" value="2.357" required>
+              </div>
+              <div class="mb-3">
+                <label for="filter_type" class="form-label">Filter Type</label>
+                <select class="form-select" id="filter_type" name="filter_type" required>
+                  <option value="butterworth">Butterworth</option>
+                  <option value="chebyshev1">Chebyshev I</option>
+                  <option value="chebyshev2">Chebyshev II</option>
+                  <option value="elliptic">Elliptic</option>
+                  <option value="fir">FIR</option>
+                  <option value="db4">DB4</option>
+                </select>
+              </div>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="use_decibel" name="use_decibel" value="on">
+                <label class="form-check-label" for="use_decibel">Use Decibel</label>
+              </div>
+              <div class="form-check mb-4">
+                <input class="form-check-input" type="checkbox" id="use_walch" name="use_walch" value="on">
+                <label class="form-check-label" for="use_walch">Use Walch</label>
+              </div>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg" id="submit-btn">Submit Data</button>
+              </div>
+            </form>
+            <div id="loading-message">Processing... please wait.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Show loading message when submitting the form.
+      document.querySelector("form").addEventListener("submit", function () {
+        document.getElementById("submit-btn").disabled = true;
+        document.getElementById("loading-message").style.display = "block";
+      });
+    </script>
+  </body>
+</html>
