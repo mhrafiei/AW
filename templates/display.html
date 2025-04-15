@@ -113,7 +113,7 @@
           RPM: {{ rpm }}
         </li>
         <li class="list-group-item bg-dark text-white">
-          Sampling Frequency: {{ sampling_frequency }} Hz
+          Sampling Frequency: {{ (sampling_frequency / downsample_factor) | int }} Hz
         </li>
         <li class="list-group-item bg-dark text-white">
           BPFI Frequency: {{ bpfi_frequency|round(3) }} Hz
@@ -127,6 +127,9 @@
         <li class="list-group-item bg-dark text-white">
           BSF Frequency: {{ bsf_frequency|round(3) }} Hz
         </li>
+        <li class="list-group-item bg-dark text-white">
+            Downsample Factor: {{ downsample_factor }}
+          </li>
         <li class="list-group-item bg-dark text-white">
           Filter Type: {{ filter_type }}
         </li>

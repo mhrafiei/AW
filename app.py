@@ -123,6 +123,8 @@ def upload() -> str:
         ftf_frequency = float(request.form.get("ftf_frequency"))
         # Convert the BSF frequency form value to a float.
         bsf_frequency = float(request.form.get("bsf_frequency"))
+        # Convert the downsample factor form value to an integer.
+        downsample_factor = int(request.form.get("downsample_factor"))
     except Exception as e:
         # If there is an error while converting numerical parameters, set an error message with details.
         error = f"Error processing numerical parameters: {e}"
@@ -151,7 +153,8 @@ def upload() -> str:
         "peak_dividant": 50,                       # A divisor to help identify significant frequency peaks.
         "use_walch": use_walch,                    # Boolean flag to use Welch's method.
         "filter_type": filter_type,                # The chosen filter type.
-        "root_folder": subfolder_path              # The path to save output images.
+        "root_folder": subfolder_path,             # The path to save output images.
+        "downsample_factor": downsample_factor,    # Downsample factor for signal processing.
     }
     
     # --- Generate Plots using RollingDefectAnalysis ---
@@ -180,13 +183,13 @@ def upload() -> str:
 
     # Define the list of image filenames (constructed based on project name and analysis parameters).
     image_filenames = [
-        f"{project}_time_{'walch' if use_walch else 'rfft'}_{filter_type.lower()}.png",
-        f"{project}_freq_{'walch' if use_walch else 'rfft'}_{filter_type.lower()}_raw.png",
-        f"{project}_freq_{'walch' if use_walch else 'rfft'}_{filter_type.lower()}_filtered.png",
-        f"{project}_freq_{'walch' if use_walch else 'rfft'}_{filter_type.lower()}_envelope.png",
-        f"{project}_spectrogram_{'walch' if use_walch else 'rfft'}_{filter_type.lower()}_raw.png",
-        f"{project}_spectrogram_{'walch' if use_walch else 'rfft'}_{filter_type.lower()}_filtered.png",
-        f"{project}_spectrogram_{'walch' if use_walch else 'rfft'}_{filter_type.lower()}_envelope.png"
+        f"{project}_time_{'walch' if use_walch else 'rfft'}_{obj.filter_type.lower()}.png",
+        f"{project}_freq_{'walch' if use_walch else 'rfft'}_{obj.filter_type.lower()}_raw.png",
+        f"{project}_freq_{'walch' if use_walch else 'rfft'}_{obj.filter_type.lower()}_filtered.png",
+        f"{project}_freq_{'walch' if use_walch else 'rfft'}_{obj.filter_type.lower()}_envelope.png",
+        f"{project}_spectrogram_{'walch' if use_walch else 'rfft'}_{obj.filter_type.lower()}_raw.png",
+        f"{project}_spectrogram_{'walch' if use_walch else 'rfft'}_{obj.filter_type.lower()}_filtered.png",
+        f"{project}_spectrogram_{'walch' if use_walch else 'rfft'}_{obj.filter_type.lower()}_envelope.png"
     ]
     
     # Build a list of URLs to the images by combining the subfolder name and each filename.
@@ -196,9 +199,23 @@ def upload() -> str:
     # Define a system prompt for the OpenAI report generation.
     system_prompt = "You are a helpful assistant, replying in json"
     # Construct a detailed user prompt by interpolating various analysis parameters and extracted features.
+
+    downsampling_comment = f"""
+    The signal first downsampled by a factor of {downsample_factor}.
+    So the new signal has a sampling frequency of {int(sampling_frequency/downsample_factor)} Hz.
+    The signal filter type is {obj.filter_type.upper()}{'.' if obj.filter_type==filter_type else f", which is different from the one selected initially ({filter_type}) since the {filter_type} resulted in all zero or nan filtered signal."}"
+    """
+
+    freq_comment = f"""
+    The signal sampling frequency is {sampling_frequency} Hz.
+    The signal filter type is {obj.filter_type.upper()}{'.' if obj.filter_type==filter_type else f", which is different from the one selected initially ({filter_type}) since the {filter_type} resulted in all zero or nan filtered signal."}"
+    """
+
     user_prompt = f"""
     Vibration signals were recorded from a rotating machine at {rpm} RPM (i.e., ~{int(rpm/60)} Hz). 
     Given the following information, identify potential rolling element bearing defects.
+
+    {freq_comment if downsample_factor==1 else downsampling_comment}
     
     Characteristic defect frequencies:
     - BPFI: {np.round(bpfi_frequency * rpm/60, 2)} Hz
@@ -269,9 +286,10 @@ def upload() -> str:
         bpfo_frequency=bpfo_frequency,            # BPFO frequency.
         ftf_frequency=ftf_frequency,              # FTF frequency.
         bsf_frequency=bsf_frequency,              # BSF frequency.
-        filter_type=filter_type,                  # Type of filter applied.
+        filter_type=obj.filter_type,                  # Type of filter applied.
         use_decibel=use_decibel,                  # Boolean flag for decibel conversion.
-        use_walch=use_walch                       # Boolean flag for using Welch's method.
+        use_walch=use_walch,                       # Boolean flag for using Welch's method.
+        downsample_factor=downsample_factor       # Downsample factor.
     )
 
 

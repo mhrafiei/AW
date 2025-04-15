@@ -41,16 +41,16 @@ import seaborn as sns
 # - firwin: For designing Finite Impulse Response (FIR) filters.
 # - find_peaks: For identifying local peaks in a signal.
 # - spectrogram: For computing a spectrogram of a signal.
-from scipy.signal import hilbert, welch, butter, cheby1, cheby2, ellip, filtfilt, firwin, find_peaks, spectrogram
+from scipy.signal import * #hilbert, welch, butter, cheby1, cheby2, ellip, filtfilt, firwin, find_peaks, spectrogram
 
 # Import statistical functions from scipy.stats:
 # - kurtosis: To measure the tailedness of the probability distribution of a signal.
 # - skew: To measure the asymmetry of the probability distribution of a signal.
-from scipy.stats import kurtosis, skew
+from scipy.stats import * #kurtosis, skew
 
 # Import type hints from the typing module.
 # These are used to provide type annotations that help with code readability and static type checking.
-from typing import Any, Optional, List, Dict, Union
+from typing import *
 
 # Import the OpenAI module which provides a client to interact with OpenAI's API.
 from openai import OpenAI
@@ -194,6 +194,9 @@ def get_values(df: Union[str, Dict[Any, Any]]) -> Any:
 
 
 # Signals Functions & Classes (20250414)
+def round_freqs(df: dict) ->dict:
+    return {key: np.round(df[key], 2) for key in df.keys()}
+
 def safe_signal(signal: np.ndarray) -> np.ndarray:
     """
     Replace problematic numerical values in a signal array with safe defaults.
@@ -355,6 +358,7 @@ class RollingDefectAnalysis:
                  ftf: float,
                  bsf: float,
                  title: str,
+                 root_folder: str,
                  filter_type: str = "butterworth",
                  use_walch: bool = False,
                  peak_dividant: int = 25,
@@ -392,6 +396,8 @@ class RollingDefectAnalysis:
         band : tuple or None, optional
             Frequency band to be used for filtering; if None, the default band is computed.
         """
+        
+        self.root_folder = root_folder
         # Replace invalid values in the signal (NaNs, inf) with safe numbers (0.0)
         self.signal = safe_signal(signal)
         # Store the downsample factor.
@@ -941,7 +947,8 @@ class RollingDefectAnalysis:
             # Draw the plot to update the figure.
             plt.draw()
             # Save the figure to a file with a filename based on the title and filter method.
-            plt.savefig(f"{self.title}_time".lower() + self._filename + '.png')
+            filename = os.path.join(self.root_folder, f"{self.title}_time".lower() + self._filename + '.png')
+            plt.savefig(filename)
             # Close the figure if requested.
             if close:
                 plt.close()
@@ -1024,7 +1031,8 @@ class RollingDefectAnalysis:
             plt.tight_layout(rect=[0, 0, 1, 1])
             plt.draw()
             # Save the figure as a PNG file based on the title, filter, and signal type.
-            plt.savefig(f"{self.title}_freq".lower() + self._filename + f"_{signal_type.lower()}.png")
+            filename = os.path.join(self.root_folder, f"{self.title}_freq".lower() + self._filename + f"_{signal_type.lower()}.png")
+            plt.savefig(filename)
             # Close the plot if requested.
             if close:
                 plt.close()
@@ -1091,7 +1099,8 @@ class RollingDefectAnalysis:
             plt.tight_layout(rect=[0, 0, 1, 1])
             plt.draw()
             # Save the spectrogram as a PNG file.
-            plt.savefig(f"{self.title}_spectrogram".lower() + self._filename + f"_{signal_type.lower()}.png")
+            filename = os.path.join(self.root_folder, f"{self.title}_spectrogram".lower() + self._filename + f"_{signal_type.lower()}.png")
+            plt.savefig(filename)
             # Close the plot if requested.
             if close:
                 plt.close()
